@@ -1,0 +1,1290 @@
+<html><head>
+        <script src="https://pixijs.download/v6.5.8/pixi.js"></script><style>whale-quicksearch{display:none!important}</style>
+        <script src="https://unpkg.com/@pixi/sound@4.4.1/dist/pixi-sound.js"></script>
+        <link rel="stylesheet" href="/static/project.css">
+        <link rel="icon" href="/static/favicon2.svg">
+        <title>레이트레이싱 - 둣스크립트</title>
+        <meta property="og:title" content="레이트레이싱 - 둣스크립트">
+        <meta property="og:description" content="레이트레이싱 엔진이에요!
+둣스크립트에서 실행하는 걸 적극 추천드립니다!!!!
+-------
+https://vlzi.vercel.app/dutscript/65af92127d8f85001a70b57d
+------
+렌더링을 직접 커스터마이징 하고 싶은 분들은 코드 들어가서 create sphere 함수와 set cam함수를 이용하시면됩니다.(+res값(해상도), sample(샘플수),bounce변수를 조절해도 됩니다)
+다만 이건 엔트리에서만 실행이되가지고 둣스크립트에서 커스터마이징한걸 렌더링하고 싶다고 하면은 리메이크하기해서 저장하고 작품공개하고 
+https://vlzi.vercel.app/dutscript/작품id &lt;-이 링크로 들어가면 됩니다(작품 공개안하면 둣스크립트에서 실행못함)
+
+스페이스키를 눌러 res(해상도)변수 보일수 있고요
+
+만드는데 진짜 힘들었어요ㅎㅎ">
+        <meta property="og:image" content="https://playentry.org/uploads/thumb/65af/65af92127d8f85001a70b57d.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="theme-color" content="#AF48FF">
+    </head>
+    <body>
+        <div id="configure">
+            <div class="configurePopup">
+                <h2>설정</h2>
+                <div class="configurations" id="configurations">
+                    <h4>격자선</h4>
+                    <div>
+                        <button onclick="configClick(0,0)">끄기</button>
+                        <button onclick="configClick(0,1)">켜기</button>
+                    </div>
+                    <h4>+및 []연산자에서 수로써 계산할 문자열</h4>
+                    <div>
+                        <button onclick="configClick(1,0)">엔트리 수 정규식</button>
+                        <button onclick="configClick(1,1)">parseFloat 가능한 문자열</button>
+                    </div>
+                    <h4>이벤트 루프 당 반복 제한</h4>
+                    <div>
+                        <button onclick="configClick(2,0)">초당 62.5회</button>
+                        <button onclick="configClick(2,1)">루프 당 1회</button>
+                        <button onclick="configClick(2,2)">루프 당 0.05초</button>
+                        <button onclick="configClick(2,3)">루프 당 1초</button>
+                        <button onclick="configClick(2,4)">루프 당 10초</button>
+                        <button onclick="configClick(2,5)">루프 당 20초</button>
+                        <button onclick="configClick(2,6)">제한 안 함</button>
+                    </div>
+                    <h4>빈 statement 지연</h4>
+                    <div>
+                        <button onclick="configClick(3,0)">끄기</button>
+                        <button onclick="configClick(3,1)">켜기</button>
+                    </div>
+                    <h4>0초 이하 기다리기 지연</h4>
+                    <div>
+                        <button onclick="configClick(4,0)">끄기</button>
+                        <button onclick="configClick(4,1)">켜기</button>
+                    </div>
+                    <h4>모든 출력을 소숫점 아래 3자리에서 반올림</h4>
+                    <div>
+                        <button onclick="configClick(5,0)">끄기</button>
+                        <button onclick="configClick(5,1)">엔트리 수 정규식</button>
+                        <button onclick="configClick(5,2)">parseFloat 가능한 문자열</button>
+                    </div>
+                    <h4>전체 화면</h4>
+                    <div>
+                        <button onclick="configClick(6,0)">끄기</button>
+                        <button onclick="configClick(6,1)">켜기</button>
+                    </div>
+                </div>
+                <div class="closeRow">
+                    <a id="applyButton"><span>확인</span></a>
+                    <button onclick="closeConfigure()"><span>취소</span></button>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar">
+            <a href="#" class="logo">
+                <img class="logo" src="/static/logo.svg">
+            </a>
+            <span class="search">
+                <input class="search" placeholder="작품 링크, ID, 검색어를 입력하세요...">
+                <button class="search"></button>
+            </span>
+        </nav>
+        <div class="mainContainer">
+            <div class="canvasContainer" id="canvasContainer">
+                <div class="projectTitle">
+                    <div class="link">
+                        <span class="titleSpan">레이트레이싱</span>
+                        <a class="link">
+                            <img class="link" src="/static/link.svg">
+                        </a>
+                        <a class="link" href="https://playentry.org/project/65af92127d8f85001a70b57d">
+                            <img class="link" src="/static/toEntry.svg">
+                        </a>
+                    </div>
+                    <div>
+                        <button class="configure" onclick="openConfigure()">설정</button>
+                        <button class="popupScreen"></button>
+                    </div>
+                </div>
+                <div id="canvasHere"><canvas width="2400" height="1350" class="mainCanvas" style="touch-action: none; cursor: inherit;"></canvas></div>
+                <div class="lowerDiv">
+                    <div id="buttonRow" style="display: inherit;">
+                        <button id="startButton"><span>시작</span></button>
+                        <button id="pauseButton" disabled=""><span>일시정지</span></button>
+                        <button id="stopButton" disabled=""><span>정지</span></button>
+                    </div>
+                    <span id="mousePos">(0, 0)</span>
+                </div>
+            </div>
+            <div class="infoContainer">
+                <div class="chapterRow">
+                    <button id="consoleButton"><span>콘솔</span></button>
+                    <button id="infoButton"><span>정보</span></button>
+                    <button id="commentButton"><span>댓글</span></button>
+                </div>
+            </div>
+        </div>
+        <script>
+            let isConfigureOpen = false;
+            function updateButtons() {
+                const root = document.getElementById("configurations");
+                [].forEach.call(root.getElementsByTagName("div"), (d, i)=>{
+                    [].forEach.call(d.getElementsByTagName("button"), (b, j) => {
+                        if (tempConfig[i] === j) {
+                            b.classList.add('checked');
+                        } else b.classList.remove("checked");
+                    });
+                })
+            }
+            function openConfigure() {
+                if (isConfigureOpen) return;
+                isConfigureOpen = true;
+                updateButtons();
+                document.getElementById("applyButton").href = `?flag=${makeFlag()}`;
+                document.getElementById("configure").style.display = "flex";
+            }
+            function closeConfigure() {
+                if (!isConfigureOpen) return;
+                isConfigureOpen = false;
+                document.getElementById("configure").style.display = "none";
+            }
+            const paramFlag = new URLSearchParams(location.search).get("flag");
+            const configs = [["grid",2,0],["exponential",2,0],["repeat",7,0],["statement",2,1],["zeroSecond",2,1],["round3",3,1],["fullScreen",2,0]];
+            const tempConfig = [0,0,0,1,1,1,0];
+            function configClick(ind, value) {
+                tempConfig[ind] = value;
+                document.getElementById("applyButton").href = `?flag=${makeFlag()}`;
+                console.log(tempConfig, makeFlag());
+                updateButtons();
+            }
+            function makeFlag() {
+                let flag = 0;
+                for (let i = 0; i < configs.length; i++) {
+                    flag = flag * configs[i][1] + tempConfig[i];
+                }
+                return flag.toString(36);
+            }
+        </script>
+        <script defer="">
+            "use strict"
+const [ SBottom, SRight, STop, SLeft ] = [ -135, 240, 135, -240 ];
+const app = new PIXI.Application({
+	width: 480, height: 270,
+	resolution: 5,
+	backgroundColor: 0xffffff,
+});
+console.log(app.ticker);
+app.view.classList.add("mainCanvas");
+document.getElementById("canvasHere").appendChild(app.view);
+const startTask = [], pauseTask = [], stopTask = [], firstTask = [];
+function loadProject() {
+	const SCN1717994557 = new Scene("SCN1717994557");
+	[ SCN1717994557 ].forEach(s=>sceneManager.add(s));
+	const VAR8419852595 = "0",
+	VAR6565863805 = "0",
+	VAR7059340131 = "0",
+	VAR1322612754 = "0",
+	VAR5629134046 = "0",
+	VAR3096221678 = "0",
+	VAR2987144254 = "0";
+	let VAR3411836464 = "0",
+	VAR8887142040 = "0",
+	VAR3575144928 = "0",
+	VAR5990464842 = "0",
+	VAR1726369778 = "0",
+	VAR6714825772 = "0",
+	VAR1524738822 = "0",
+	VAR0155083607 = "0",
+	VAR8511847244 = "0",
+	VAR7035290515 = "0",
+	VAR9060784029 = "0",
+	VAR3923498651 = "0",
+	VAR1861865130 = "0",
+	VAR2628357450 = "0",
+	VAR1174862920 = "0",
+	VAR4771446173 = "0",
+	VAR3276058695 = "0",
+	VAR5173468205 = "0",
+	VAR0205999402 = "0",
+	VAR7813581569 = "0",
+	VAR1248963860 = "0",
+	VAR4066673218 = "0",
+	VAR5706547377 = "0",
+	VAR5348593531 = "0",
+	VAR3924350135 = "0",
+	VAR2659161875 = "0",
+	VAR5086913864 = "0",
+	VAR1382504577 = "0",
+	VAR7352353471 = "0",
+	VAR5798989440 = "0",
+	VAR3916685991 = "0",
+	VAR2066205464 = "0",
+	VAR2248780025 = "0",
+	VAR0248457245 = "0",
+	VAR2531213159 = "0",
+	VAR3807807154 = "1",
+	VAR8445167511 = "0",
+	VAR2489996584 = "0",
+	VAR3719032670 = "0",
+	VAR3005540578 = "0",
+	VAR7070072475 = "0",
+	VAR7724024344 = "0",
+	VAR7688599478 = "0",
+	VAR3981804947 = "0",
+	VAR5123322394 = "0",
+	VAR4119224025 = "0",
+	VAR1000496092 = "0",
+	VAR3275270626 = "0",
+	VAR2186734069 = "0",
+	VAR9646028963 = "2",
+	VAR1962363660 = "0",
+	VAR5361202126 = "0",
+	VAR5147855546 = "0",
+	VAR4640437943 = "0",
+	VAR6015226156 = "0",
+	VAR3494604482 = "0",
+	VAR1754425672 = "0",
+	VAR5536180628 = "0",
+	VAR3203159658 = "0",
+	VAR5847844234 = "0",
+	VAR8820438660 = "0",
+	VAR6111053460 = "15",
+	VAR7239765419 = "0",
+	VAR9776836482 = "0",
+	VAR7419401402 = "0",
+	VAR6845909249 = "0",
+	VAR5883213897 = "0",
+	VAR8020604795 = "0",
+	VAR9674681035 = [
+	],
+	VAR8460523944 = [
+	],
+	VAR2003507746 = [
+	],
+	VAR6760526033 = [
+	],
+	VAR4909394848 = [
+	],
+	VAR1255987810 = [
+	],
+	VAR9427386135 = [
+	],
+	VAR9288138433 = [
+	],
+	VAR7640600050 = [
+	];
+	stopTask.push(()=>{
+		[ VAR3411836464, VAR8887142040, VAR3575144928, VAR5990464842, VAR1726369778, VAR6714825772, VAR1524738822, VAR0155083607, VAR8511847244, VAR7035290515, VAR9060784029, VAR3923498651, VAR1861865130, VAR2628357450, VAR1174862920, VAR4771446173, VAR3276058695, VAR5173468205, VAR0205999402, VAR7813581569, VAR1248963860, VAR4066673218, VAR5706547377, VAR5348593531, VAR3924350135, VAR2659161875, VAR5086913864, VAR1382504577, VAR7352353471, VAR5798989440, VAR3916685991, VAR2066205464, VAR2248780025, VAR0248457245, VAR2531213159, VAR3807807154, VAR8445167511, VAR2489996584, VAR3719032670, VAR3005540578, VAR7070072475, VAR7724024344, VAR7688599478, VAR3981804947, VAR5123322394, VAR4119224025, VAR1000496092, VAR3275270626, VAR2186734069, VAR9646028963, VAR1962363660, VAR5361202126, VAR5147855546, VAR4640437943, VAR6015226156, VAR3494604482, VAR1754425672, VAR5536180628, VAR3203159658, VAR5847844234, VAR8820438660, VAR6111053460, VAR7239765419, VAR9776836482, VAR7419401402, VAR6845909249, VAR5883213897, VAR8020604795, VAR9674681035, VAR8460523944, VAR2003507746, VAR6760526033, VAR4909394848, VAR1255987810, VAR9427386135, VAR9288138433, VAR7640600050 ] = [ "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "2", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "15", "0", "0", "0", "0", "0", "0", [], [], [], [], [], [], [], [], [] ];
+	});
+	function* FUN2321754934(scriptFlag, PRM8860307692, PRM4898302984, PRM7133344603, PRM0756262357, PRM0508309196, PRM0232025513) {
+		let VAR4496505621 = "0";
+		funcBody: {
+			VAR4496505621 = cf((PRM8860307692)*(PRM0756262357))+cf(cf((PRM4898302984)*(PRM0508309196))+cf((PRM7133344603)*(PRM0232025513)));
+		}
+		return VAR4496505621;
+	}
+	function* FUN7732358006(scriptFlag, PRM6910912956) {
+		const VAR2076436326 = "0",
+		VAR2981661884 = "0",
+		VAR7298267798 = "0",
+		VAR5079770630 = "0";
+		let VAR5432391157 = "0",
+		VAR0328926176 = "0",
+		VAR0143312815 = "0",
+		VAR2473745590 = "0";
+		funcBody: {
+			if (cf(PRM6910912956)==cf("1")) {
+				VAR6015226156 = "99999";
+			}
+			VAR8020604795 = (VAR4640437943)-(VAR9288138433[cl(VAR9288138433,PRM6910912956)]);
+			VAR5883213897 = (VAR5147855546)-(VAR9427386135[cl(VAR9427386135,PRM6910912956)]);
+			VAR6845909249 = (VAR5361202126)-(VAR1255987810[cl(VAR1255987810,PRM6910912956)]);
+			VAR5432391157 = yield* FUN2321754934.apply(this, [scriptFlag, VAR7419401402, VAR9776836482, VAR7239765419, VAR7419401402, VAR9776836482, VAR7239765419]);
+			VAR0328926176 = ("2")*(yield* FUN2321754934.apply(this, [scriptFlag, VAR8020604795, VAR5883213897, VAR6845909249, VAR7419401402, VAR9776836482, VAR7239765419]));
+			VAR0143312815 = (yield* FUN2321754934.apply(this, [scriptFlag, VAR8020604795, VAR5883213897, VAR6845909249, VAR8020604795, VAR5883213897, VAR6845909249]))-((VAR7640600050[cl(VAR7640600050,PRM6910912956)])**2);
+			VAR2473745590 = ((VAR0328926176)**2)-((("4")*(VAR5432391157))*(VAR0143312815));
+			if (cf(VAR2473745590)>=cf("0")) {
+				VAR8820438660 = ((("-1")*(VAR0328926176))-((VAR2473745590)**0.5))/(("2")*(VAR5432391157));
+				VAR5847844234 = (cf(("-1")*(VAR0328926176))+cf((VAR2473745590)**0.5))/(("2")*(VAR5432391157));
+				if ((cf(VAR6015226156)>cf(VAR8820438660)) & (cf(VAR8820438660)>cf("0"))) {
+					VAR6015226156 = VAR8820438660;
+					VAR1962363660 = PRM6910912956;
+				}
+				if ((cf(VAR6015226156)>cf(VAR5847844234)) & (cf(VAR5847844234)>cf("0"))) {
+					VAR6015226156 = VAR8820438660;
+					VAR1962363660 = PRM6910912956;
+				}
+			}
+			if (cf(PRM6910912956)<cf(VAR1255987810.length)) {
+				yield* FUN7732358006.apply(this, [scriptFlag, cf(PRM6910912956)+cf("1")])
+			}
+		}
+		return void 0;
+	}
+	function* FUN1040846154(scriptFlag, PRM5679591492) {
+		funcBody: {
+			this.brush.drawing = true;
+			yield* FUN4313033524.apply(this, [scriptFlag, "1"])
+			VAR2531213159 = ((VAR2531213159)/(VAR3807807154))*("255");
+			VAR0248457245 = ((VAR0248457245)/(VAR3807807154))*("255");
+			VAR2248780025 = ((VAR2248780025)/(VAR3807807154))*("255");
+			this.brush.color = parseColor(yield* FUN9155304521.apply(this, [scriptFlag, yield* FUN3376727680.apply(this, [scriptFlag, VAR2531213159, "255"]), yield* FUN3376727680.apply(this, [scriptFlag, VAR0248457245, "255"]), yield* FUN3376727680.apply(this, [scriptFlag, VAR2248780025, "255"])]));
+			this.x += pf(VAR6111053460);
+			if (cf(PRM5679591492)<cf(("480")/(VAR6111053460))) {
+				yield* FUN1040846154.apply(this, [scriptFlag, cf(PRM5679591492)+cf("1")])
+				} else {
+				this.brush.drawing = false;
+			}
+		}
+		return void 0;
+	}
+	function* FUN5133691903(scriptFlag, PRM5947604270, PRM8069010136, PRM6575781100) {
+		let VAR9297082150 = "0";
+		funcBody: {
+			VAR9297082150 = (cf((PRM5947604270)**2)+cf(cf((PRM8069010136)**2)+cf((PRM6575781100)**2)))**0.5;
+		}
+		return VAR9297082150;
+	}
+	function* FUN1986191354(scriptFlag, PRM7538290832, PRM6613521015, PRM7592267598, PRM9655074608, PRM0897760556, PRM2671724137, PRM5815204113, PRM7170730117) {
+		funcBody: {
+			VAR9288138433.push(PRM7538290832);
+			VAR9427386135.push(PRM6613521015);
+			VAR1255987810.push(PRM7592267598);
+			VAR7640600050.push(PRM9655074608);
+			VAR4909394848.push(PRM0897760556);
+			VAR6760526033.push(PRM2671724137);
+			VAR8460523944.push(PRM5815204113);
+			VAR9674681035.push(PRM7170730117);
+		}
+		return void 0;
+	}
+	function* FUN3376727680(scriptFlag, PRM2496307765, PRM0709331180) {
+		let VAR9148045398 = "0";
+		funcBody: {
+			VAR9148045398 = PRM2496307765;
+			if (cf(PRM0709331180)<cf(VAR9148045398)) {
+				VAR9148045398 = PRM0709331180;
+			}
+		}
+		return VAR9148045398;
+	}
+	function* FUN4717900353(scriptFlag, PRM2216057204) {
+		const VAR5541018530 = "0";
+		let VAR8778228640 = "6",
+		VAR3190828739 = "0";
+		funcBody: {
+			VAR8778228640 = charAt("0123456789ABCDEF",cf((Math.floor((PRM2216057204)/("1")))%("16"))+cf("1"));
+			VAR3190828739 = charAt("0123456789ABCDEF",cf((Math.floor((PRM2216057204)/("16")))%("16"))+cf("1"));
+		}
+		return "".concat(VAR3190828739, VAR8778228640);
+	}
+	function* FUN3082665693(scriptFlag, PRM4067827110, PRM3053935374) {
+		let VAR2976812482 = "0",
+		VAR2279302145 = "0";
+		funcBody: {
+			VAR2279302145 = (PRM4067827110).replaceAll("#", "");
+			if (cf(PRM3053935374)==cf("R")) {
+				VAR2279302145 = substring(VAR2279302145, "1", "2");
+				} else {
+				if (cf(PRM3053935374)==cf("G")) {
+					VAR2279302145 = substring(VAR2279302145, "3", "4");
+					} else {
+					VAR2279302145 = substring(VAR2279302145, "5", "6");
+				}
+			}
+			VAR2976812482 = cf(((kmp("0123456789ABCDEF", (charAt(VAR2279302145,"1")).toUpperCase(), true))-("1"))*("16"))+cf((kmp("0123456789ABCDEF", (charAt(VAR2279302145,"2")).toUpperCase(), true))-("1"));
+		}
+		return VAR2976812482;
+	}
+	function* FUN8718264691(scriptFlag, PRM7166582053, PRM0868625170) {
+		const VAR9854139385 = "0";
+		let VAR1131297154 = "0";
+		funcBody: {
+			VAR1131297154 = PRM7166582053;
+			if (cf(PRM0868625170)>cf(VAR1131297154)) {
+				VAR1131297154 = PRM0868625170;
+			}
+		}
+		return VAR1131297154;
+	}
+	function* FUN9155304521(scriptFlag, PRM0434049273, PRM1322428986, PRM8474585945) {
+		let VAR0405886438 = "0";
+		funcBody: {
+			VAR0405886438 = "".concat(yield* FUN4717900353.apply(this, [scriptFlag, PRM0434049273]), "".concat(yield* FUN4717900353.apply(this, [scriptFlag, PRM1322428986]), yield* FUN4717900353.apply(this, [scriptFlag, PRM8474585945])));
+		}
+		return VAR0405886438;
+	}
+	function* FUN9359632241(scriptFlag, PRM4490756480) {
+		const VAR5821868923 = "0",
+		VAR1850873428 = "0",
+		VAR9922503344 = "0",
+		VAR2198983324 = "0";
+		let VAR2249623113 = "0",
+		VAR4586169288 = "0",
+		VAR4962288383 = "0",
+		VAR8614990965 = "0",
+		VAR7652131963 = "0",
+		VAR7763013661 = "0";
+		funcBody: {
+			if (cf(PRM4490756480)==cf("1")) {
+				VAR2186734069 = "0";
+				VAR3275270626 = "0";
+				VAR1000496092 = "0";
+				VAR7724024344 = "1";
+				VAR7070072475 = "1";
+				VAR3005540578 = "1";
+			}
+			yield* FUN7732358006.apply(this, [scriptFlag, "1"])
+			if (cf(VAR6015226156)!=cf("99999")) {
+				VAR8614990965 = cf(VAR4640437943)+cf((VAR7419401402)*(VAR6015226156));
+				VAR7652131963 = cf(VAR5147855546)+cf((VAR9776836482)*(VAR6015226156));
+				VAR7763013661 = cf(VAR5361202126)+cf((VAR7239765419)*(VAR6015226156));
+				VAR3203159658 = (VAR8614990965)-(VAR9288138433[cl(VAR9288138433,VAR1962363660)]);
+				VAR5536180628 = (VAR7652131963)-(VAR9427386135[cl(VAR9427386135,VAR1962363660)]);
+				VAR1754425672 = (VAR7763013661)-(VAR1255987810[cl(VAR1255987810,VAR1962363660)]);
+				VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, VAR3203159658, VAR5536180628, VAR1754425672]);
+				VAR3203159658 = (VAR3203159658)/(VAR3494604482);
+				VAR5536180628 = (VAR5536180628)/(VAR3494604482);
+				VAR1754425672 = (VAR1754425672)/(VAR3494604482);
+				VAR2249623113 = yield* FUN3082665693.apply(this, [scriptFlag, VAR4909394848[cl(VAR4909394848,VAR1962363660)], "R"]);
+				VAR4586169288 = yield* FUN3082665693.apply(this, [scriptFlag, VAR4909394848[cl(VAR4909394848,VAR1962363660)], "G"]);
+				VAR4962288383 = yield* FUN3082665693.apply(this, [scriptFlag, VAR4909394848[cl(VAR4909394848,VAR1962363660)], "B"]);
+				VAR2186734069 = cf(VAR2186734069) + cf((((yield* FUN3082665693.apply(this, [scriptFlag, VAR8460523944[cl(VAR8460523944,VAR1962363660)], "R"]))/("255"))*(VAR9674681035[cl(VAR9674681035,VAR1962363660)]))*(VAR7724024344));
+				VAR3275270626 = cf(VAR3275270626) + cf((((yield* FUN3082665693.apply(this, [scriptFlag, VAR8460523944[cl(VAR8460523944,VAR1962363660)], "G"]))/("255"))*(VAR9674681035[cl(VAR9674681035,VAR1962363660)]))*(VAR7070072475));
+				VAR1000496092 = cf(VAR1000496092) + cf((((yield* FUN3082665693.apply(this, [scriptFlag, VAR8460523944[cl(VAR8460523944,VAR1962363660)], "B"]))/("255"))*(VAR9674681035[cl(VAR9674681035,VAR1962363660)]))*(VAR3005540578));
+				VAR7724024344 = (VAR7724024344)*((VAR2249623113)/("255"));
+				VAR7070072475 = (VAR7070072475)*((VAR4586169288)/("255"));
+				VAR3005540578 = (VAR3005540578)*((VAR4962288383)/("255"));
+				VAR4640437943 = cf(VAR8614990965)+cf((VAR3203159658)*("0.1"));
+				VAR5147855546 = cf(VAR7652131963)+cf((VAR5536180628)*("0.1"));
+				VAR5361202126 = cf(VAR7763013661)+cf((VAR1754425672)*("0.1"));
+				yield* FUN1073216469.apply(this, [scriptFlag])
+				VAR3719032670 = cf(VAR3203159658)+cf(VAR2066205464);
+				VAR2489996584 = cf(VAR5536180628)+cf(VAR3916685991);
+				VAR8445167511 = cf(VAR1754425672)+cf(VAR5798989440);
+				VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, VAR3719032670, VAR2489996584, VAR8445167511]);
+				VAR3719032670 = (VAR3719032670)/(VAR3494604482);
+				VAR2489996584 = (VAR2489996584)/(VAR3494604482);
+				VAR8445167511 = (VAR8445167511)/(VAR3494604482);
+				yield* FUN3610186606.apply(this, [scriptFlag, VAR7419401402, VAR9776836482, VAR7239765419, VAR3203159658, VAR5536180628, VAR1754425672])
+				VAR7419401402 = yield* FUN8666199917.apply(this, [scriptFlag, VAR6760526033[cl(VAR6760526033,VAR1962363660)], VAR3719032670, VAR4119224025]);
+				VAR9776836482 = yield* FUN8666199917.apply(this, [scriptFlag, VAR6760526033[cl(VAR6760526033,VAR1962363660)], VAR2489996584, VAR5123322394]);
+				VAR7239765419 = yield* FUN8666199917.apply(this, [scriptFlag, VAR6760526033[cl(VAR6760526033,VAR1962363660)], VAR8445167511, VAR3981804947]);
+				if (cf(PRM4490756480)<cf(VAR9646028963)) {
+					yield* FUN9359632241.apply(this, [scriptFlag, cf(PRM4490756480)+cf("1")])
+				}
+				} else {
+				VAR2186734069 = cf(VAR2186734069) + cf(((yield* FUN3082665693.apply(this, [scriptFlag, VAR7688599478, "R"]))/("255"))*(VAR7724024344));
+				VAR3275270626 = cf(VAR3275270626) + cf(((yield* FUN3082665693.apply(this, [scriptFlag, VAR7688599478, "G"]))/("255"))*(VAR7070072475));
+				VAR1000496092 = cf(VAR1000496092) + cf(((yield* FUN3082665693.apply(this, [scriptFlag, VAR7688599478, "B"]))/("255"))*(VAR3005540578));
+			}
+		}
+		return void 0;
+	}
+	function* FUN3610186606(scriptFlag, PRM2257549760, PRM1636878440, PRM3196547338, PRM3027293930, PRM7393161812, PRM9039025415) {
+		let VAR1505484122 = "0";
+		funcBody: {
+			VAR1505484122 = (yield* FUN2321754934.apply(this, [scriptFlag, PRM2257549760, PRM1636878440, PRM3196547338, PRM3027293930, PRM7393161812, PRM9039025415]))*("-1");
+			VAR4119224025 = cf(PRM2257549760)+cf(("2")*((VAR1505484122)*(PRM3027293930)));
+			VAR5123322394 = cf(PRM1636878440)+cf(("2")*((VAR1505484122)*(PRM7393161812)));
+			VAR3981804947 = cf(PRM3196547338)+cf(("2")*((VAR1505484122)*(PRM9039025415)));
+		}
+		return void 0;
+	}
+	function* FUN5790748516(scriptFlag) {
+		funcBody: {
+			yield state.tillTime.push(0);
+		}
+		return void 0;
+	}
+	function* FUN4313033524(scriptFlag, PRM2288765349) {
+		funcBody: {
+			if (cf(PRM2288765349)==cf("1")) {
+				VAR2531213159 = "0";
+				VAR0248457245 = "0";
+				VAR2248780025 = "0";
+			}
+			VAR4640437943 = VAR5990464842;
+			VAR5147855546 = VAR3575144928;
+			VAR5361202126 = VAR8887142040;
+			yield* FUN9097717527.apply(this, [scriptFlag, (cf(this.x)+cf("240"))/("480"), (cf(this.y)+cf("135"))/("270")])
+			yield* FUN9359632241.apply(this, [scriptFlag, "1"])
+			VAR2531213159 = cf(VAR2531213159) + cf(VAR2186734069);
+			VAR0248457245 = cf(VAR0248457245) + cf(VAR3275270626);
+			VAR2248780025 = cf(VAR2248780025) + cf(VAR1000496092);
+			if (cf(PRM2288765349)<cf(VAR3807807154)) {
+				yield* FUN4313033524.apply(this, [scriptFlag, cf(PRM2288765349)+cf("1")])
+			}
+		}
+		return void 0;
+	}
+	function* FUN8666199917(scriptFlag, PRM5803311767, PRM6275729361, PRM0943477359) {
+		let VAR9971782242 = "0";
+		funcBody: {
+			VAR9971782242 = cf((PRM5803311767)*(PRM0943477359))+cf((PRM6275729361)*(("1")-(PRM5803311767)));
+		}
+		return VAR9971782242;
+	}
+	function* FUN1073216469(scriptFlag) {
+		funcBody: {
+			VAR2066205464 = calc_rand_func("-1.00", "1.00");
+			VAR3916685991 = calc_rand_func("-1.00", "1.00");
+			VAR5798989440 = calc_rand_func("-1.00", "1.00");
+			VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, VAR2066205464, VAR3916685991, VAR5798989440]);
+			VAR2066205464 = (VAR2066205464)/(VAR3494604482);
+			VAR3916685991 = (VAR3916685991)/(VAR3494604482);
+			VAR5798989440 = (VAR5798989440)/(VAR3494604482);
+		}
+		return void 0;
+	}
+	function* FUN0120386648(scriptFlag, PRM1628049377, PRM1763769536, PRM5752862206, PRM4074382587, PRM5247343170, PRM2508583879, PRM8781399906) {
+		const VAR3298540970 = "0",
+		VAR6327699379 = "0",
+		VAR9163324977 = "0",
+		VAR5936733319 = "0",
+		VAR0399159748 = "0",
+		VAR8278966314 = "0";
+		funcBody: {
+			VAR2659161875 = PRM1628049377;
+			VAR5990464842 = PRM1763769536;
+			VAR3575144928 = PRM5752862206;
+			VAR8887142040 = PRM4074382587;
+			VAR4640437943 = PRM1763769536;
+			VAR5147855546 = PRM5752862206;
+			VAR5361202126 = PRM4074382587;
+			VAR3924350135 = PRM5247343170;
+			VAR5348593531 = PRM2508583879;
+			VAR5706547377 = PRM8781399906;
+			VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, (VAR4640437943)-(VAR3924350135), (VAR5147855546)-(VAR5348593531), (VAR5361202126)-(VAR5706547377)]);
+			VAR0205999402 = VAR3494604482;
+			VAR4066673218 = ((VAR4640437943)-(VAR3924350135))/(VAR3494604482);
+			VAR1248963860 = ((VAR5147855546)-(VAR5348593531))/(VAR3494604482);
+			VAR7813581569 = ((VAR5361202126)-(VAR5706547377))/(VAR3494604482);
+			VAR5173468205 = ("2")*(Math.tan(((VAR2659161875)/("2"))*radPerDeg));
+			VAR3276058695 = (VAR5173468205)*(("480")/("270"));
+			yield* FUN2788580085.apply(this, [scriptFlag, "0", "1", "0", VAR4066673218, VAR1248963860, VAR7813581569])
+			VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, VAR7352353471, VAR1382504577, VAR5086913864]);
+			VAR7352353471 = ((VAR7352353471)*("-1"))/(VAR3494604482);
+			VAR1382504577 = ((VAR1382504577)*("-1"))/(VAR3494604482);
+			VAR5086913864 = ((VAR5086913864)*("-1"))/(VAR3494604482);
+			VAR7035290515 = (VAR3276058695)*(VAR7352353471);
+			VAR8511847244 = (VAR3276058695)*(VAR1382504577);
+			VAR0155083607 = (VAR3276058695)*(VAR5086913864);
+			yield* FUN2788580085.apply(this, [scriptFlag, VAR4066673218, VAR1248963860, VAR7813581569, VAR7352353471, VAR1382504577, VAR5086913864])
+			VAR1524738822 = (VAR5173468205)*((VAR7352353471)*("-1"));
+			VAR6714825772 = (VAR5173468205)*((VAR1382504577)*("-1"));
+			VAR1726369778 = (VAR5173468205)*((VAR5086913864)*("-1"));
+			VAR1861865130 = (((VAR4640437943)-((VAR7035290515)/("2")))-((VAR1524738822)/("2")))-(VAR4066673218);
+			VAR3923498651 = (((VAR5147855546)-((VAR8511847244)/("2")))-((VAR6714825772)/("2")))-(VAR1248963860);
+			VAR9060784029 = (((VAR5361202126)-((VAR0155083607)/("2")))-((VAR1726369778)/("2")))-(VAR7813581569);
+		}
+		return void 0;
+	}
+	function* FUN2788580085(scriptFlag, PRM7763480094, PRM6634027644, PRM8019704381, PRM7266326671, PRM8851918893, PRM1273118816) {
+		funcBody: {
+			VAR7352353471 = ((PRM6634027644)*(PRM1273118816))-((PRM8019704381)*(PRM8851918893));
+			VAR1382504577 = ((PRM8019704381)*(PRM7266326671))-((PRM7763480094)*(PRM1273118816));
+			VAR5086913864 = ((PRM7763480094)*(PRM8851918893))-((PRM6634027644)*(PRM7266326671));
+		}
+		return void 0;
+	}
+	function* FUN9097717527(scriptFlag, PRM2147411485, PRM2679754742) {
+		let VAR3208875648 = "0",
+		VAR2013341827 = "0",
+		VAR8961796186 = "0";
+		funcBody: {
+			VAR3208875648 = cf(VAR1861865130)+cf(cf((PRM2147411485)*(VAR7035290515))+cf((PRM2679754742)*(VAR1524738822)));
+			VAR2013341827 = cf(VAR3923498651)+cf(cf((PRM2147411485)*(VAR8511847244))+cf((PRM2679754742)*(VAR6714825772)));
+			VAR8961796186 = cf(VAR9060784029)+cf(cf((PRM2147411485)*(VAR0155083607))+cf((PRM2679754742)*(VAR1726369778)));
+			VAR4771446173 = VAR3208875648;
+			VAR1174862920 = VAR2013341827;
+			VAR2628357450 = VAR8961796186;
+			VAR7419401402 = (VAR3208875648)-(VAR4640437943);
+			VAR9776836482 = (VAR2013341827)-(VAR5147855546);
+			VAR7239765419 = (VAR8961796186)-(VAR5361202126);
+			VAR3494604482 = yield* FUN5133691903.apply(this, [scriptFlag, VAR7419401402, VAR9776836482, VAR7239765419]);
+			VAR7419401402 = (VAR7419401402)/(VAR3494604482);
+			VAR9776836482 = (VAR9776836482)/(VAR3494604482);
+			VAR7239765419 = (VAR7239765419)/(VAR3494604482);
+		}
+		return void 0;
+	}
+	const OBJ1676074396 = (function () {
+		const me = new EO("다운로드 - 2024-01-23T191203.246.png", [480,270], [0.4990766567754698,0.49907665677546975,960,540], [-0.12,-0.07,0,0], [["?path=%2Fuploads%2Fc6%2F1e%2Fimage%2Fc61ec1b4lrq7ch6z2ks373ff6751p2n6.png&time=1777511526388&key=ykwKnI5G4eMXIzVGRg%2Fjg2SBH6T4XPXXR18RINKqvaU%3D","다운로드 - 2024-01-23T191203.246.png","5lrz"]], 0, [], true, "sprite", "", 0, false, 0);
+		SCN1717994557.addIniChild(me);
+		me.addEvents = function(copyList) {
+			console.log("addEvents", this.name);
+			(SCN1717994557.events.onRUN ??= []).push(() => {
+				runGen(this, function*(scriptFlag) {
+					this.visibility = false;
+				});
+			});
+			this.copy = () => { //TODO: 복제본 코드 있을 때만 정의
+				const copy = this.clone();
+				SCN1717994557.addChild(copy, this);
+				copy.init();
+				(copy.addEvents = me.addEvents.bind(copy))();
+				copy.events.onCLONE?.forEach(f=>f());
+			};
+		};
+		return me;
+	})();
+	const OBJ6252115523 = (function () {
+		const me = new EO("엔트리봇", [72,123], [0.5128205128205128,0.5128205128205128,144,246], [0,0,0,0], [["?path=%2Flib%2Fentry-js%2Fimages%2Fmedia%2Fentrybot1.svg&time=1777511526388&key=TCtO7iHWoehNn1egdS5e%2BdmxI5UDZqrjBaaLU6Gu4ms%3D","엔트리봇_걷기1","vx80"],["?path=%2Flib%2Fentry-js%2Fimages%2Fmedia%2Fentrybot2.svg&time=1777511526388&key=4cWvM60GOgkOxFRjkMpR%2Bkzv20nVsiFFEAxhiwwv2bE%3D","엔트리봇_걷기2","4t48"]], 0, [["?path=%2Flib%2Fentry-js%2Fimages%2Fmedia%2Fbark.mp3&time=1777511526389&key=SY5Wf4QguU6HPUeT8qn2qTx0jPQgaNv3dE2Lsh5B%2F64%3D","강아지 짖는 소리","8el5",1.3]], false, "sprite", "", 0, false, 0);
+		SCN1717994557.addIniChild(me);
+		me.addEvents = function(copyList) {
+			console.log("addEvents", this.name);
+			(SCN1717994557.events.onRUN ??= []).push(() => {
+				runGen(this, function*(scriptFlag) {
+					yield state.tillTime.push(("0")*1e3);
+					VAR7688599478 = "#a39cf4";
+					yield* FUN0120386648.apply(this, [scriptFlag, "70", "-1", "1", "-1", "0", "0", "1"])
+					yield* FUN1986191354.apply(this, [scriptFlag, "1", "0", "1", "0.5", "#e83a30", "1", "#e8e230", "0"])
+					yield* FUN1986191354.apply(this, [scriptFlag, "0", "0", "1", "0.5", "#ffffff", "1", "#ffffff", "2"])
+					yield* FUN1986191354.apply(this, [scriptFlag, "-1", "0", "1", "0.5", "#4030e8", "1", "#ffffff", "0"])
+					yield* FUN1986191354.apply(this, [scriptFlag, "0", "-100.5", "1", "100", "#66d7ee", "0", "#e8e230", "0"])
+					VAR9646028963 = "15";
+					VAR3807807154 = "10";
+					VAR6111053460 = "16";
+					for (let i0 = 0; i0 < ("8"); i0++)
+					{
+						this.brush.drawing = false;
+						this.brush.width = pf(VAR6111053460);
+						this.pos = [
+							pf("-240"),
+							pf("135"),
+						]
+						for (let i1 = 0; i1 < (cf(("270")/(VAR6111053460))+cf("1")); i1++)
+						{
+							this.x = pf("-240");
+							yield* FUN1040846154.apply(this, [scriptFlag, "1"])
+							this.y += pf((VAR6111053460)*("-1"));
+							yield* stuckChecker();
+						}
+						VAR3807807154 = cf(VAR3807807154) + cf("10");
+						VAR6111053460 = (VAR6111053460)/("2");
+						yield* stuckChecker();
+					}
+				});
+			});
+			((SCN1717994557.events.onKEY ??= Object.create(null))["Space"] ??= []).push(() => {
+				runGen(this, function*(scriptFlag) {
+					if (cf(VAR3411836464)==cf("0")) {
+						"TNS_SHOW_VARIABLE"
+						VAR3411836464 = "1";
+						} else {
+						"TNS_HIDE_VARIABLE"
+						VAR3411836464 = "0";
+					}
+				});
+			});
+			this.copy = () => { //TODO: 복제본 코드 있을 때만 정의
+				const copy = this.clone();
+				SCN1717994557.addChild(copy, this);
+				copy.init();
+				(copy.addEvents = me.addEvents.bind(copy))();
+				copy.events.onCLONE?.forEach(f=>f());
+			};
+		};
+		return me;
+	})();
+}
+const numberAssets = 4;
+let loadedAssets = 0;
+let assetsEnd = false;
+function addAsset() {
+	loadedAssets++;
+	console.log((loadedAssets/numberAssets*100).toFixed(2), "% loaded");
+}
+class Scene {
+	//container = null;
+	constructor(id) {
+		this.id = id;
+		this.num = 0;
+		this.iniChilds = [];
+		this.container = app.stage.addChild(new PIXI.Container());
+		this.container.visible = false;
+		this.children = [];
+		this.events = Object.create(null);
+	}
+	addIniChild(object) {
+		this.iniChilds.push(object);
+	}
+	addChild(object, parent) {
+		//console.log(object.name, "ac", object.sprite.texture);
+		this.children.push(object);
+		if (parent) this.container.addChildAt(object.sprite, this.container.getChildIndex(parent.sprite));
+		else this.container.addChildAt(object.sprite, 0);
+		//debugger;
+		return object;
+	}
+	kill() {
+		this.children.forEach(o => {
+			o.scripts.forEach(script=>script.set(false));
+			o.kill();
+		});
+		this.events = Object.create(null);
+		while (state.tillTime.size()) state.tillTime.pop();
+		state.unpause(); //resolve all
+		this.children = [];
+		this.container.removeChildren();//while(this.container.children[0]) this.container.removeChild(this.container.children[0]); //TODO:여기서 GC 누수가 있을지도?
+	}
+	init() {
+		this.iniChilds.forEach(o => {this.addChild(o);});
+		this.children.forEach(o => {  o.init(); });
+	}
+	start() {
+		this.children.forEach(o => o.addEvents());
+		this.events.onOSS?.forEach(f=>f());
+	}
+}
+class SceneManager {
+	constructor(scenes = []) {
+		this.scenes = scenes;
+		if (scenes.length)
+		{
+			this.currentScene = scenes[0];
+			this.currentScene.container.visible = true;
+		}
+	}
+	add(scene) {
+		if (!this.scenes.length) {
+			this.currentScene = scene;
+			this.currentScene.container.visible = true;
+		}
+		scene.num = this.scenes.length;
+		this.scenes.push(scene);
+	}
+	goTo(s, pause) {
+		const scene = Number.isInteger(s) ? this.scenes[s] : s;
+		this.currentScene.container.visible = false;
+		this.currentScene.kill();
+		this.currentScene = scene;
+		this.currentScene.init();
+		if(!pause) this.currentScene.start();
+		this.currentScene.container.visible = true;
+	}
+}
+class Entity {
+	constructor() {
+		this.name = "undefined";
+		this.x = this.y = 0;
+		this.scaleX = this.scaleY = 1;
+		this.size = 100;
+		this.defaultWidthHeight = { width: 1, height: 1 };
+		this.rotation = this.direction = 0;
+		this.rotVec = [ 1, 0 ]; this.dirVec = [ 1, 0 ];
+		this.pictures = [];
+		this.selectedPicture = 0;
+		this.visibility = true;
+		this.text = "";
+	}
+}
+//EO { sprite, textures, entity } aa
+const corsServer =
+"./file";
+//"https://api.allorigins.win/raw?url=https://playentry.org";
+class EO {
+	constructor(name, reg, size, pos, pictures, selectedPicture, soundsSource, visibility, type, text, fontSize, lineBreak, textAlign, original=undefined, textures=undefined, sounds=undefined) {
+		this.events = new Object();
+		const ini = this.initial = new Entity();
+		this.entity = new Entity();
+		this.type = type;
+		ini.text = text;
+		this.textAlign = textAlign;
+		this.fontSize = fontSize;
+		this.lineBreak = lineBreak;
+		if (type === "textBox") {
+			this.sprite = new PIXI.Text("Text", { fontFamily : 'Arial' });
+			this.sprite.style.fontSize = this.fontSize;
+			if (this.lineBreak) {
+				this.sprite.style.align = [ "center", "left", "right" ][this.textAlign];
+				this.sprite.pivot.set(size[2] * [ 0, 0.5, -0.5 ][this.textAlign], size[3] / 2);
+				} else {
+				this.sprite.anchor.set([ 0.5, 0, 1 ][this.textAlign], 0.5);
+			}
+			} else {
+			this.sprite = new PIXI.Sprite();
+		}
+		const s = this.sprite;
+		this.name = ini.name = name; ini.x = pos[0]; ini.y = pos[1];
+		if (!this.lineBreak) { s.pivot.x = reg[0]; s.pivot.y = reg[1]; }
+		ini.rotation = pos[2]; ini.direction = pos[3];
+		//TODO: lineBreak
+		[ ini.scaleX, ini.scaleY ] = size;
+		this.entity.defaultWidthHeight = { width: size[2], height: size[3] };
+		this.scripts = new Set();
+		this.original = original || this;
+		this.entity.pictures = pictures;
+		ini.selectedPicture = selectedPicture;
+		ini.visibility = visibility;
+		Promise.all([(async ()=>{
+				if (textures)
+				{
+					this.textures = textures;
+					const { width, height } = this.textures.length ? this.textures[ini.selectedPicture] : this.entity.defaultWidthHeight;
+					ini.size = (ini.scaleX * width  + ini.scaleY * height) / 2;
+				}
+				else
+				{
+					this.textures = await Promise.all(
+					this.entity.pictures.map(async p => {
+						const image = new Image();
+						image.crossOrigin = "anonymous";
+						//image.loading = "eager";
+						image.src = corsServer + p[0];//URL.createObjectURL(new Blob([buffer]));
+						//console.log(this.initial.name,image);
+						await new Promise(resolve => image.onload = () => resolve());
+						//console.log(this.initial.name,image.width, image.height);
+						const texture = PIXI.Texture.from(image);
+						const entryTexture = {
+							texture: texture,
+							width: texture.width,
+							height: texture.height,
+							name: p[1],
+							id: p[2],
+						};
+						console.log(this.initial.name, entryTexture);
+						addAsset();
+						return entryTexture;
+					})
+					);
+					//console.log(this.name, this.textures);
+					const { width, height } = this.textures.length ? this.textures[ini.selectedPicture] : this.entity.defaultWidthHeight;
+					ini.size = (ini.scaleX * width  + ini.scaleY * height) / 2;
+				}
+				this.textureIDMap = new Map();
+				this.textures.forEach(t=>{
+					this.textureIDMap.set(t.id, t);
+				})
+				})(), (async ()=>{
+				if (sounds) {
+					this.sounds = sounds;
+					} else {
+					this.sounds = await Promise.all(
+					soundsSource.map(async sc => {
+						const resp = await fetch(corsServer + sc[0]);
+						const buff = await resp.arrayBuffer();
+						const sound = PIXI.sound.Sound.from(buff);
+						const entrySound = {
+							sound: sound,
+							name: sc[1],
+							id: sc[2],
+							duration:sc[3],
+						};
+						console.log(this.initial.name, entrySound);
+						addAsset();
+						return entrySound;
+					})
+					);
+				}
+				this.soundIDMap = new Map();
+				this.soundNameMap = new Map();
+				this.sounds.forEach(s=> {
+					this.soundIDMap.set(s.id, s);
+					this.soundNameMap.set(s.name, s);
+				})
+			})()]).then(()=>{
+			if (loadedAssets === numberAssets && !assetsEnd) {
+				assetsEnd = true;
+				sceneManager.currentScene.init();
+				document.getElementById("buttonRow").style.display = "inherit";
+			}
+		});
+	}
+	kill() {
+		this.brush?.graph?.clear?.();
+		this.brush = this.stamp = this.paint = null;
+	}
+	clone() {
+		return new EO(
+		this.name + "-" + Math.random().toString(36).slice(2, 6),
+		[ this.sprite.pivot.x, this.sprite.pivot.y ],
+		[ this.initial.scaleX, this.initial.scaleY ],
+		[ this.x, this.y, this.rotation, this.direction ],
+		this.entity.pictures, this.selectedPicture, this.soundsSource, this.visibility,
+		this.type, this.text, this.fontSize, this.lineBreak, this.textAlign,
+		this.original, this.textures, this.sounds
+		);
+	}
+	set text(value) {
+		this.entity.text = value;
+		this.sprite.text = value;
+		} get text() {
+		return this.entity.text;
+	}
+	set name(value) {
+		this.entity.name = value;
+	} get name() { return this.entity.name; }
+	set size(value) {
+		//console.log(this, "size", value);
+		this.entity.size = value;
+		const temp = value / this.size;
+		this.entity.scaleX *= temp; this.entity.scaleY *= temp;
+		this.sprite.scale.set(this.entity.scaleX, this.entity.scaleY);
+		} get size() {
+		const { width, height } = this.textures.length ? this.textures[this.selectedPicture] : this.entity.defaultWidthHeight;
+		return (this.entity.scaleX * width + this.entity.scaleY * height) / 2;
+	}
+	stretchX(value) {
+		const temp = value / this.size + 1;
+		this.entity.scaleX *= temp;
+		this.sprite.scale.set(this.entity.scaleX, this.entity.scaleY);
+	}
+	stretchY(value) {
+		const temp = value / this.size + 1;
+		this.entity.scaleY *= temp;
+		this.sprite.scale.set(this.entity.scaleX, this.entity.scaleY);
+	}
+	set x(value) {
+		this.pos = [ value, this.pos[1] ];
+	} get x() { return this.pos[0]; }
+	set y(value) {
+		this.pos = [ this.pos[0], value ];
+	} get y() { return this.pos[1]; }
+	set pos(value) {
+		const prv = [this.sprite.x, this.sprite.y];
+		this.entity.x = value[0];
+		this.sprite.x = value[0] - SLeft;
+		this.entity.y = value[1];
+		this.sprite.y = STop - value[1];
+		if (this._brush?.drawing) {
+			if (this._brush.cacheCount >= 8 * STop * SRight) {
+				const canvas = app.renderer.plugins.extract.canvas(this._brush.container);
+				const bt = new PIXI.BaseTexture(canvas);
+				//console.log(canvas.toDataUrl());
+				this._brush.cache.texture = new PIXI.Texture(bt);
+				this._brush.graph.clear();
+				this._brush.lineStyle();
+				this._brush.cacheCount = 0;
+			}
+			this._brush.graph.moveTo(prv[0], prv[1]);
+			this._brush.graph.lineTo(this.sprite.x, this.sprite.y);
+			this._brush.cacheCount += this._brush._width * Math.sqrt((prv[0] - this.sprite.x) ** 2 + (prv[1] - this.sprite.y));
+		}
+	} get pos() { return [ this.entity.x, this.entity.y ]; }
+	set rotation(value) { // ccw
+		this.entity.rotation = value;
+		this.entity.rotVec = [
+			Math.cos(value),
+			Math.sin(value),
+		];
+		this.sprite.rotation = 0 - value; //cw
+	} get rotation() { return this.entity.rotation; } //ccw
+	set direction(value) { //ccw
+		this.entity.direction = value;
+		this.entity.dirVec = [
+			Math.cos(value),
+			Math.sin(value),
+		];
+	} get direction() { return this.entity.direction } //ccw
+	set selectedPicture(value) {
+		this.entity.selectedPicture = value;
+		this.sprite.texture = this.textures[value]?.texture;
+	} get selectedPicture() { return this.entity.selectedPicture; }
+	set visibility(value) {
+		this.entity.visibility = value;
+		this.sprite.visible = value;
+	}
+	init() {
+		//console.log("init", this.name);
+		this.name = this.initial.name;
+		[ this.x, this.y ] = [ this.initial.x, this.initial.y ];
+		this.rotation = this.initial.rotation; this.direction = this.initial.direction;
+		[ this.entity.scaleX, this.entity.scaleY ] = [ this.initial.scaleX, this.initial.scaleY ];
+		if (this.type !== "textBox") this.selectedPicture = this.initial.selectedPicture;
+		[ this.entity.scaleX, this.entity.scaleY ] = [ this.initial.scaleX, this.initial.scaleY ];
+		this.size = this.initial.size;
+		this.visibility = this.initial.visibility;
+		this.text = this.initial.text;
+	}
+	get brush() {
+		return (this._brush ??= new Brush(this));
+	}
+	set brush(value) {
+		this._brush = value;
+	}
+}
+class Flag{
+	constructor(bool) {
+		this.value = !!bool;
+	}
+	["set"](bool) {
+		this.value = !!bool;
+	}
+	valueOf() {
+		return this.value;
+	}
+}
+startTask.push(() => {
+	state.paused = false;
+	state.unpause();
+	if (state.started) sceneManager.currentScene.children.forEach(o=>{
+		o.sounds.forEach(s=>s.sound.resume())
+	});
+	if (!state.started) { //first
+		state.started = true;
+		firstTask.forEach(t=>t());
+	}
+});
+firstTask.push(() => {
+	sceneManager.currentScene.start();
+});
+pauseTask.push(() => {
+	state.paused = true;
+	sceneManager.currentScene.children.forEach(o=>{
+		o.sounds.forEach(s=>s.sound.pause())
+	});
+});
+stopTask.push(() => {
+	state.started = false;
+	sceneManager.goTo(0, true);
+	state.paused = true;
+	state.elapsed = 0;
+	sceneManager.currentScene.children.forEach(o=>{
+		o.sounds.forEach(s=>{
+			s.sound.instances.forEach(i => {
+				i.stop();
+			})
+		})
+	});
+})
+const pf = parseFloat;
+const cf = num => typeof num === "string" && /^-?\d+\.?\d*$/.test(num) ?
+Number.parseFloat(num) : num
+function cl(list, index, insert) {
+	if (index === "FIRST") return 0;
+	if (index === "LAST") return list.length-1;
+	if (index === "RANDOM") return Math.floor(Math.random()*list.length);
+	const i = cf(index);
+	if (typeof i !== "number") throw new Error("리스트 인덱스 오류");
+	if (parseInt(i) !== i || i < 1 || (insert ? list.length + 1 < i : list.length < i)) throw new Error(`리스트 범위 오류${list.length}"${i}"`);
+	return i-1;
+}
+class Brush {
+	constructor(obj) {
+		console.log("hi");
+		this.graph = new PIXI.Graphics();
+		this.graph.mask = new PIXI.Graphics()
+		.beginFill(0xffffff)
+		.drawRect(0, 0, SRight * 2, STop * 2)
+		.endFill();
+		this.container = new PIXI.Container();
+		this.cache = new PIXI.Sprite(PIXI.Texture.EMPTY);
+		this.container.addChild(this.cache).addChild(this.graph);
+		obj.sprite.parent.addChildAt(this.container, obj.sprite.parent.getChildIndex(obj.sprite));
+		this.owner = obj;
+		console.log('m', obj.sprite.x, obj.sprite.y);
+		this.drawing = false;
+		this._width = 1;
+		this._opacity = 1;
+		this._color = 0xff0000;
+		this.cacheCount = 0;
+		this.lineStyle();
+	}
+	setTransparency(percent) {
+		this.opacity = 1 - percent / 100;
+	}
+	lineStyle() {
+		this.graph.lineStyle(this._width, this._color, this._opacity);
+	}
+	set width(v) {
+		this._width = v;
+		this.lineStyle();
+	}
+	set color(v) {
+		this._color = v;
+		this.lineStyle();
+	}
+	set transparency(v) {
+		this._opacity = 1 - v/100;
+		this.lineStyle();
+	}
+}
+function parseColor(color) {
+	const m = color.match(/^#?(?<hex>[\dA-Fa-f]{6})$/);
+	if (m) return parseInt(m.groups.hex, 16);
+	else return 0;
+}
+function cc(string, index) {
+	const i = cf(index);
+	if (typeof i !== "number") throw new Error("문자열 인덱스 오류");
+	if (parseInt(i) !== i || i < 1 || string.length < i) throw new Error(`문자열 범위 오류"${i}"`);
+	return i-1;
+}
+function charAt(string, index) {
+	return string.toString()[cc(string, index)];
+}
+function substring(string, s, e) {
+	return string.toString().substring(cc(string, s), cc(string, e) + 1);
+}
+function kmp(st, ta, find) {
+	const string = st.toString(), target = ta.toString();
+	const length = string.length, targetLength = target.length, limit = length - targetLength;
+	const pi = new Array(targetLength + 1).fill(0);
+	let i = 1, j = 0, count = 0;
+	while (i < targetLength) {
+		if (target[i + j] === target[j]) pi[i + ++j] = j;
+		else if (j){
+			i += j - pi[j]; j = pi[j];
+		} else i++;
+	}
+	i = j = 0;
+	while (i <= limit) {
+		if (string[i + j] === target[j]) {
+			j++;
+			if (j === targetLength) {
+				if (find) {
+					return i + 1;
+				}
+				count++;
+				i += j - pi[j]; j = pi[j];
+			}
+			} else if (j) {
+			i += j - pi[j]; j = pi[j];
+		} else i++;
+	}
+	if (find) {
+		return 0;
+	}
+	return count;
+}
+function calc_rand_func(a, b) {
+	const [ap, bp] = [Number(a), Number(b)];
+	if (isNaN(ap) || isNaN(bp)) throw new Error(`Both arguments of the function calc_rand must be Number()-able string in strict mode.(${a} and ${b})`);
+	const hasFloat = [a,b].reduce((flag, str) => flag || /^-?\d+\.\d+$/.test(str), false);
+	const [from, to] = ap <= bp ? [ap, bp] : [bp, ap];
+	if (hasFloat) return Math.random()*(to - from) + from;
+	else return Math.floor(Math.random()*(to - from + 1)) + from
+}
+const radPerDeg = Math.PI * 2 / 360;
+firstTask.push(() => {
+	sceneManager.currentScene.events.onRUN?.forEach(f=>f());
+});
+function *ignoreZero(ms) {
+	if (ms > 0) yield state.tillTime.push(ms);
+}
+function *stuckChecker() {
+	yield state.tillTime.push(16);
+}
+window.addEventListener("keydown", function(e) {
+	if (!state.paused) {
+		e.preventDefault();
+		let c = e.code.replace(/Digit|Numpad|Key/, "");
+		if (c.includes("Shift")) c = "ShiftRight";
+		console.log("key down", e.code, c);
+		sceneManager.currentScene.events.onKEY?.[c]?.forEach(f=>f());
+	}
+})
+function runGen (object, gen) {
+	const script = new Flag(true), iter = gen.call(object, script); //didnt run yet
+	object.scripts.add(script);
+	return (async function step(val) {
+		//1. check stoped 2. check paused 3. check statements' termination 4. await promise
+		if (script == false) return; //so as to delete script
+		//console.log(object.name);
+		if (state.paused) { document.body.appendChild(document.createTextNode("제보주세요")); await state.waitForUnpause(); }//defer starting async tasks while the state is "paused" even though yieled promises are not usually fullfilled with the state paused except wait_until_true, which will be improved
+		if (script == false) return; //for pause -> stop
+		state.lastRefresh = Date.now();
+		const result = iter.next(val);
+		if (result.done) return result.value;
+		return step(await result.value);
+		})().then(()=>{
+		script.set(false);
+		object.scripts.delete(script);
+	});
+}
+const state = (()=> {
+	let paused = true, timeInterval;
+	let elapsed = 0, prevTime;
+	const onUnpause = [];
+	return {
+		lastRefresh:0,
+		tillTime: (() => {
+			const heap = [];
+			let counter = 0;
+			function cmp(a, b) { return a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]); };
+			return {
+				size() { return heap.length; },
+				top() { return heap[0][0]; },
+				push(time) {
+					time ??= 0;
+					return new Promise(resolve => {
+						const item = [ elapsed + time, counter++, resolve ];
+						let i = heap.length, c;
+						while((c = i) && cmp(item, heap[i = (i - 1) >>> 1])) heap[c] = heap[i];
+						heap[c] = item;
+					});
+				},
+				pop() {
+					const o = heap[0], e = heap.pop();
+					let i = 0, p;
+					while (
+					(i = (p = i) << 1 | 1) < heap.length &&
+					cmp(heap[i += (i+1 < heap.length && cmp(heap[i+1], heap[i]))], e)
+					) heap[p] = heap[i];
+					if (heap.length) heap[p] = e;
+					o[2]();
+				}
+			}
+		})(),
+		started: false,
+		set elapsed(value) {
+			elapsed = value;
+			while (this.tillTime.size() && this.tillTime.top() <= elapsed) this.tillTime.pop();
+		},
+		get elapsed() { return elapsed; },
+		waitForUnpause() {
+			if (!paused) throw new Error("What are u waiting for");
+			return new Promise(resolve => {
+				onUnpause.push(resolve);
+				console.log("onUnpause: ", onUnpause, onUnpause.length);
+			});
+		},
+		set paused(value) {
+			const bv = Boolean(value);
+			if (bv === paused) return;
+			paused = bv;
+			if (paused) {
+				elapsed += Date.now() - prevTime; // no this.elapsed to prevent tilltime from popping
+				clearInterval(timeInterval);
+				} else {
+				prevTime = Date.now();
+				timeInterval = setInterval(() => {
+					const now = Date.now();
+					this.elapsed += now - prevTime;
+					prevTime = now;
+				});//n초 기다리기의 부정확성 고증(?)은 아니고 초시계는 정확히 구현했으니 n초기다리기는 지양하라는 귀차니즘입니ㄷ
+			}
+		},
+		get paused() { return paused; },
+		unpause() {
+			onUnpause.forEach(r => r());
+			onUnpause.length = 0;
+		},
+	}
+})();
+const [ startBtn, pauseBtn, stopBtn, mouseView ] = [ "startButton", "pauseButton", "stopButton", "mousePos" ].map(id => document.getElementById(id));
+startBtn.onclick = () => {
+	startBtn.disabled = true;
+	pauseBtn.disabled = stopBtn.disabled = false;
+	startTask.forEach(t=>t());
+};
+pauseBtn.onclick = () => {
+	startBtn.disabled = false;
+	pauseBtn.disabled = true;
+	pauseTask.forEach(t=>t());
+}
+stopBtn.onclick = () => {
+	startBtn.disabled = false;
+	pauseBtn.disabled = stopBtn.disabled = true;
+	stopTask.forEach(t=>t());
+}
+let mouse_pos = [ 0, 0 ];
+app.renderer.plugins.interaction.on("pointermove", e => {
+	const pos = e.data.global;
+	if (!(0 <= pos.x && pos.x <= 480 && 0 <= pos.y && pos.y <= 270)) return;
+	const [ x, y ] = [ pos.x - 240, 135 - pos.y ];
+	mouse_pos = [ x, y ];
+	mouseView.innerText = `(${mouse_pos[0].toFixed(2)}, ${mouse_pos[1].toFixed(2)})`;
+});
+const sceneManager = new SceneManager();
+loadProject();
+        </script>
+        <p style="color:#ffffff">둣스크립트 작품 페이지 디자인에 참여해주신 분들: 리메닝님, 새싹님, 파랑새님, 614님, 피차스님</p>
+    
+</body><whale-quicksearch translate="no" style="visibility: visible;"></whale-quicksearch></html>
